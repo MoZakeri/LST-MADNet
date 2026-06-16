@@ -1,0 +1,75 @@
+# Configuration for training LST-MADNet with Deep Fusion (DF)
+# Per-channel LSTLayer1D heads -> fuse TFRs -> shared Conv/Pool -> FC classifier
+
+data:
+  data_dir: "data/splitted/"
+  target_features:
+    intrinsic: ["torque", "current", "angle", "depth"]
+    task: ["tcp_x", "tcp_y", "tcp_z", "tcp_rx", "tcp_ry", "tcp_rz", "current"]
+    extrinsic: ["sound"]
+
+training:
+  batch_size: 16
+  n_epochs: 35
+  lr: 1.0e-3
+  clip_grad: true
+  device: "cuda"
+  logging_interval: 5
+
+model:
+  channels: ["torque", "current", "angle", "depth", "tcp_x", "tcp_y", "tcp_z", "tcp_rx", "tcp_ry", "tcp_rz", "tcp_current", "sound"]
+  batch_norm: true
+
+  signal_sizes:
+    torque: 1408
+    current: 1408
+    angle: 1408
+    depth: 1408
+    tcp_x: 463
+    tcp_y: 463
+    tcp_z: 463
+    tcp_rx: 463
+    tcp_ry: 463
+    tcp_rz: 463
+    tcp_current: 463
+    sound: 34816
+
+  # Per-channel LSTLayer1D configurations
+  stlayer_configs:
+    torque:
+      scale_min: 0.1
+      scale_max: 10.0
+      num_scales: 16
+      kernel_ratio: 0.1
+      stride_ratio: 0.5
+      kernel_ratio_lp: 0.1
+      stride_ratio_lp: 0.5
+    # ... repeat for each channel
+
+  # Shared convolutional layers (applied after fusion)
+  conv1_config:
+    out_channels: 6
+    kernel_ratio: [0.5, 0.2]
+    stride_ratio: [0.5, 0.5]
+  pool1_config:
+    kernel_ratio: [0.5, 0.5]
+    stride_ratio: [0.5, 0.5]
+  conv2_config:
+    out_channels: 16
+    kernel_ratio: [0.5, 0.2]
+    stride_ratio: [0.5, 0.5]
+  pool2_config:
+    kernel_ratio: [0.5, 0.5]
+    stride_ratio: [0.5, 0.5]
+
+  linear_config:
+    hidden1_ratio: 0.5
+    hidden2_ratio: 0.5
+    num_classes: 4
+
+wandb:
+  enabled: false
+  project_name: "LST-MADNet-DF"
+
+checkpoints:
+  dir: "checkpoints/"

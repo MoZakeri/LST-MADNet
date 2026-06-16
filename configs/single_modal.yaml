@@ -1,0 +1,53 @@
+# Configuration for training a single-modal LSTN model
+# Example: LSTN on torque channel from intrinsic modality
+
+data:
+  train_path: "data/splitted/intrinsic_tr.parquet"
+  validation_path: "data/splitted/intrinsic_val.parquet"
+  target_feature: "torque"
+  resample_mode: "min"
+
+training:
+  batch_size: 32
+  n_epochs: 25
+  lr: 1.0e-2
+  clip_grad: false
+  device: "cuda"  # or "cpu"
+  logging_interval: 5
+
+model:
+  signal_size: 1408  # minimum length of intrinsic measurements
+  batch_norm: false
+  stlayer_config:
+    scale_min: 0.1
+    scale_max: 10.0
+    num_scales: 16
+    kernel_ratio: 0.1
+    stride_ratio: 0.5
+    kernel_ratio_lp: 0.1
+    stride_ratio_lp: 0.5
+  conv1_config:
+    out_channels: 6
+    kernel_ratio: [0.5, 0.2]
+    stride_ratio: [0.5, 0.5]
+  pool1_config:
+    kernel_ratio: [0.5, 0.5]
+    stride_ratio: [0.5, 0.5]
+  conv2_config:
+    out_channels: 16
+    kernel_ratio: [0.5, 0.2]
+    stride_ratio: [0.5, 0.5]
+  pool2_config:
+    kernel_ratio: [0.5, 0.5]
+    stride_ratio: [0.5, 0.5]
+  linear_config:
+    hidden1_ratio: 0.5
+    hidden2_ratio: 0.5
+    num_classes: 4
+
+wandb:
+  enabled: false
+  project_name: "LSTN_torque"
+
+checkpoints:
+  dir: "checkpoints/"
