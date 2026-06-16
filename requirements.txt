@@ -1,0 +1,12 @@
+torch>=2.0
+numpy
+pandas
+scipy
+scikit-learn
+librosa
+matplotlib
+seaborn
+tqdm
+pyarrow
+wandb
+torcheval
