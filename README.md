@@ -73,7 +73,7 @@ Each channel is processed by an independent LSTLayer1D. The resulting time-frequ
 Channel 1 (B, 1, L₁) → LSTLayer1D → TFR₁ ─┐
 Channel 2 (B, 1, L₂) → LSTLayer1D → TFR₂ ─┼→ Resize & Stack
 Channel N (B, 1, Lₙ) → LSTLayer1D → TFRₙ ─┘        │
-                                                      ↓
+                                                  ↓
                                 Conv2D → ReLU → MaxPool2D → [BatchNorm2D]
                               → Conv2D → ReLU → MaxPool2D → [BatchNorm2D]
                               → Flatten → FC → ReLU → FC → ReLU → FC
@@ -200,8 +200,6 @@ print(f"ROC AUC:  {report['roc']:.4f}")
 ## Dataset
 
 The framework was developed and evaluated on the **TriScrewSense** dataset — a multi-modal dataset collected from an industrial screw-driving cell.
-
-> **Download**: [TODO: Add link to dataset]
 
 <p align="center">
   <img src="docs/figures/screw_cell_13.png" alt="Screw Cell Setup" width="600"/>
